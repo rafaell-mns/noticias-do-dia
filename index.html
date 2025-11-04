@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notícias do Dia</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="icon" type="image/png" href="imagens/icon.png">
+</head>
+
+<body>
+    <div class="container">
+        <div class="panel">
+            <h1>Notícias do Dia</h1>
+
+            <div class="form-group">
+                <label>Notícias</label>
+                <textarea id="textoNoticia" placeholder="Digite o título e texto das notícias aqui..."></textarea>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="layout-controls-simple">
+                <button class="btn" id="downloadBtn"><img src="imagens/download.png" alt="download"
+                        class="btn-icon">Download</button>
+            </div>
+
+            <div class="post-preview" id="preview"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Configurações Fixas ---
+        const COR_FIXA_FUNDO = '#f0f6ff';
+        const COR_FIXA_TITULO = '#000000';
+        const NOME_PADRAO = 'post-stories-simples.png';
+        // ---------------------------
+
+        const preview = document.getElementById('preview');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const textoNoticia = document.getElementById('textoNoticia');
+
+        // Função para atualizar o texto do título no preview
+        // Função para atualizar o texto do título no preview
+        function syncTituloNoticia(text) {
+            let tituloEl = preview.querySelector('.noticia');
+            if (!tituloEl) return;
+            // Implementação robusta: separa no primeiro '\n' e envolve
+            // a primeira parte em um <span> com classe própria. Isso
+            // garante comportamento determinístico (útil para html2canvas)
+            function escapeHTML(s) {
+                return String(s)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            const raw = text || '';
+            // Divide o texto em blocos de parágrafos usando quebra de linha dupla (simulando um novo parágrafo)
+            // Usa /\r?\n\r?\n/ para suportar \r\n\r\n e \n\n
+            const paragraphBlocks = raw.split(/\r?\n\r?\n/);
+
+            let finalHtml = '';
+
+            paragraphBlocks.forEach((block, index) => {
+                if (block.trim() === '') return; // Ignora blocos vazios
+
+                // Dentro de cada bloco, divide em linhas (quebra de linha simples)
+                const lines = block.split(/\r?\n/);
+                const firstLine = lines.shift() || ''; // Primeira linha
+                const restLines = lines.length ? lines : []; // Linhas restantes
+
+                // Aplica a classe Bold na primeira linha do *parágrafo*
+                let blockHtml = '<span class="titulo-primeira-linha">' + escapeHTML(firstLine) + '</span>';
+                
+                if (restLines.length) {
+                    // Adiciona as quebras de linha e o corpo do texto restante
+                    blockHtml += '<br><span class="corpo-noticia">' + restLines.map(escapeHTML).join('<br>') + '</span>';
+                }
+
+                // Envolve todo o parágrafo em um bloco para separação visual e adicione a quebra de parágrafo.
+                // Usamos a tag <p> para simular um parágrafo (melhor semântica)
+                finalHtml += '<p class="noticia-paragrafo">' + blockHtml + '</p>';
+            });
+
+
+            // Substitui o conteúdo da div .noticia pelo novo HTML
+            tituloEl.innerHTML = finalHtml;
+
+            if (typeof repositionTitulo === 'function') {
+                setTimeout(repositionTitulo, 50); // 50ms é geralmente suficiente
+            }
+        }
+
+        if (textoNoticia) {
+            textoNoticia.addEventListener('input', (e) => {
+                syncTituloNoticia(e.target.value);
+            });
+        }
+
+        // cabeçalho no topo
+        function inserirCelular() {
+            let celularEl = preview.querySelector('.celular-img');
+            if (!celularEl) {
+                celularEl = document.createElement('img');
+                celularEl.className = 'celular-img';
+                celularEl.src = 'imagens/celular.png';
+                celularEl.alt = 'Detalhe celular stories';
+                // Insere depois de todos os outros elementos para que fique por cima (z-index)
+                preview.appendChild(celularEl);
+                // Quando a imagem carregar, reposiciona o título para ficar abaixo dela
+                celularEl.addEventListener('load', () => {
+                    repositionTitulo();
+                });
+            }
+        }
+
+        // overlay granulado (acima de tudo)
+        function inserirGranulado() {
+            let granEl = preview.querySelector('.granulado-overlay');
+            if (!granEl) {
+                granEl = document.createElement('img');
+                granEl.className = 'granulado-overlay';
+                granEl.src = 'imagens/granulado.png';
+                granEl.alt = 'Granulado overlay';
+                // adiciona por último para garantir que fique por cima
+                preview.appendChild(granEl);
+                // Não precisa reposicionar título, mas garante redraw se necessário
+                granEl.addEventListener('load', () => {
+                    // força recalculo visual se quiser — não obrigatório
+                });
+            }
+        }
+
+        // Insere o elemento do título (se não existir) e aplica cor padrão
+        function inserirTitulo() {
+            let tituloEl = preview.querySelector('.noticia');
+            if (!tituloEl) {
+                tituloEl = document.createElement('div');
+                tituloEl.className = 'noticia';
+                // aplica cor do título definida na constante
+                tituloEl.style.color = COR_FIXA_TITULO;
+                preview.appendChild(tituloEl);
+            }
+            repositionTitulo();
+        }
+
+        // Reposiciona o título alguns pixels abaixo da imagem do celular
+        // Reposiciona o título alguns pixels abaixo da imagem do celular E AJUSTA A ALTURA DO PREVIEW
+        function repositionTitulo() {
+            const tituloEl = preview.querySelector('.noticia');
+            const celularEl = preview.querySelector('.celular-img');
+            if (!tituloEl) return;
+
+            const GAP_CELULAR_TITULO = 12; // Espaço em pixels entre o celular e o título
+            const BOTTOM_PADDING = 20; // Padding inferior do .post-preview
+
+            let topPx; // Variável para a posição 'top' do título
+
+            if (celularEl) {
+                // Usa getBoundingClientRect para calcular posição relativa ao preview
+                // Distância do topo do preview até a base da imagem
+                const rectCel = celularEl.getBoundingClientRect();
+                const rectPrev = preview.getBoundingClientRect();
+                // Distância do topo do preview até a base da imagem + GAP
+                topPx = Math.round(celularEl.offsetTop + celularEl.offsetHeight + GAP_CELULAR_TITULO);
+                tituloEl.style.top = topPx + 'px';
+            } else {
+                // fallback
+                topPx = preview.offsetHeight * 0.6; // Valor aproximado
+                tituloEl.style.top = topPx + 'px';
+            }
+
+            // 1. Força o navegador a recalcular o layout para obter a altura correta do texto
+            // Isso é crucial para textos longos após a mudança de posição 'top'
+            tituloEl.offsetHeight; 
+
+            // 2. Calcula a altura total necessária para o .post-preview
+            // Altura total = Posição do topo do título + Altura do conteúdo do título + Espaço inferior
+            const alturaNecessaria = topPx + tituloEl.offsetHeight + BOTTOM_PADDING;
+
+            // 3. Aplica a nova altura ao .post-preview
+            // Note que você deve definir o 'height' ou 'min-height'. Usar 'height' é mais direto para html2canvas.
+            preview.style.height = `${alturaNecessaria}px`;
+            // Remove o min-height fixo se você o estava usando, mas como está no CSS, o JS o sobrescreverá.
+            
+            // O html2canvas usará essa altura quando for invocado.
+        }
+
+        // Chame repositionTitulo() no final de syncTituloNoticia e na inicialização
+
+
+        // Função de inicialização simplificada
+        function initializePreview() {
+            if (!preview) return;
+
+            if (preview) preview.style.background = COR_FIXA_FUNDO;
+            inserirCelular();
+            inserirGranulado();
+            inserirTitulo();
+
+            const downloadBtnEl = document.getElementById('downloadBtn');
+        }
+
+        // Reposiciona o título ao redimensionar a janela
+        window.addEventListener('resize', () => {
+            repositionTitulo();
+        });
+
+        function getFileName() {
+            const data = new Date();
+            const dia = String(data.getDate()).padStart(2, '0');
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            return `noticias-dia-${dia}-${mes}`;
+        }
+
+        // Download
+        downloadBtn.addEventListener('click', async () => {
+            if (!preview || preview.offsetHeight === 0) {
+                alert('O preview está vazio. Recarregue a página.');
+                return;
+            }
+
+            try {
+                // Diminui um pixel para evitar problemas de borda
+                const canvas = await html2canvas(preview, { useCORS: true, scale: 2, height: preview.offsetHeight - 1 });
+                const link = document.createElement('a');
+                link.download = getFileName();
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (err) {
+                console.error('Erro ao gerar imagem com html2canvas:', err);
+                alert('Erro ao gerar a imagem. Abra o console do navegador para mais detalhes.');
+            }
+        });
+
+        initializePreview();
+    </script>
+</body>
+
+</html>

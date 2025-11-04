@@ -1,0 +1,526 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Importa fonte customizada */
+@font-face {
+    font-family: 'AvantGardeBold';
+    src: url('fontes/ITC Avant Garde Gothic Pro-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Importa fonte Medium */
+@font-face {
+    font-family: 'AvantGardeMedium';
+    src: url('fontes/ITC Avant Garde Gothic Pro-Book.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+
+/* Fundo gradiente do site e fonte base */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('imagens/tribunal.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Painel branco com sombra */
+.panel {
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+/* Título principal */
+h1 {
+    color: #2d3748;
+    margin-bottom: 30px;
+    font-size: 24px;
+    text-align: center;
+}
+
+/* Espaçamento entre campos do formulário */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Rótulo dos campos */
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Campo de texto da notícia */
+textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    resize: vertical;
+    min-height: 120px;
+}
+
+
+/* Botão de download*/
+.btn {
+    width: 140px;
+    padding: 12px 16px;
+    /* Cor de fundo fixa (Azul Claro) no JS do index.html */
+    background: #0c5abd;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    margin-top: 0px;
+    display: inline-flex;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1;
+}
+
+/* Ícone no botão de download */
+.btn-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    object-fit: contain;
+    margin: 0;
+    padding: 0;
+}
+
+.btn img {
+    display: block;
+}
+
+/* Container dos controles (apenas botão de download) */
+.layout-controls-simple {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Preview do post: sempre responsivo, proporção 9/16 (STORIES) */
+/* Preview do post: AGR- Não-fixo, cresce com o conteúdo */
+.post-preview {
+    position: relative;
+    width: 100%;
+    /* REMOVIDO: aspect-ratio: 9/16; */
+    min-height: 500px;
+    /* Altura mínima para visualização */
+    max-width: 400px;
+    margin: 0 auto;
+    background: #f0f6ff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    /* Alinha ao topo para o conteúdo começar no topo */
+    display: flex;
+    align-items: flex-start;
+    /* <-- NOVO */
+    justify-content: center;
+    /* Adicione um padding inferior para espaço depois do texto */
+}
+
+/* Alteração no .container para não fixar 100% da altura da viewport */
+.container {
+    width: 100%;
+    /* REMOVIDO: height: 100vh; */
+    min-height: 100vh;
+    /* Garante que o container ocupe a altura mínima */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+    padding: 20px;
+}
+
+
+/* Responsividade: empilha painéis em telas menores */
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/* CSS do titulo da noticia */
+.noticia {
+    position: absolute;
+    /* distâncias horizontais (margens esquerda/direita) para elemento absoluto */
+    left: 33px;
+    right: 33px;
+
+    /* Estilos de fonte e cor */
+    color: #000;
+    /* Usamos a família Medium por padrão; a primeira linha ficará em Bold via ::first-line */
+    font-weight: 500;
+    font-family: 'AvantGardeMedium', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    line-height: 1.15;
+
+    /* Texto justificado (solicitação do usuário) */
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    white-space: pre-wrap;
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* Estiliza apenas a primeira linha do título para usar a versão Bold */
+.noticia::first-line {
+    font-family: 'AvantGardeBold', 'AvantGardeMedium', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+}
+
+/* Classes quando usamos JS para separar a primeira linha explicitamente */
+.noticia .titulo-primeira-linha {
+    font-family: 'AvantGardeBold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    display: inline;
+    /* mantém fluxo inline dentro do bloco */
+}
+
+.noticia .corpo-noticia {
+    font-family: 'AvantGardeMedium', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    display: inline;
+    /* mantém fluxo inline dentro do bloco */
+}
+
+/* CSS do cabeçalho (Ajuste a imagem para o topo) */
+.post-preview .celular-img {
+    position: absolute;
+    top: var(--celular-top, 25px);
+    /* margem superior */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 320px;
+    /* ajustar tamanho*/
+    height: auto;
+    z-index: 99999;
+    pointer-events: none;
+    display: block;
+}
+
+/* Overlay granulado: acima de tudo dentro do preview */
+.post-preview .granulado-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 50%;
+    object-fit: cover;
+    z-index: 100000;
+    /* acima de .celular-img */
+    pointer-events: none;
+    /* não bloqueia interações */
+    display: block;
+}
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Importa fonte customizada */
+@font-face {
+    font-family: 'AvantGardeBold';
+    src: url('fontes/ITC Avant Garde Gothic Pro-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Importa fonte Medium */
+@font-face {
+    font-family: 'AvantGardeMedium';
+    src: url('fontes/ITC Avant Garde Gothic Pro-Book.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+
+/* Fundo gradiente do site e fonte base */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('imagens/tribunal.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Painel branco com sombra */
+.panel {
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+/* Título principal */
+h1 {
+    color: #2d3748;
+    margin-bottom: 30px;
+    font-size: 24px;
+    text-align: center;
+}
+
+/* Espaçamento entre campos do formulário */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Rótulo dos campos */
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Campo de texto da notícia */
+textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Aumenta tamanho do textarea específico do formulário principal */
+#textoNoticia {
+    min-height: 662px;
+    /* maior por padrão para facilitar edição */
+    font-size: 16px;
+    /* ligeiramente maior para legibilidade */
+    line-height: 1.35;
+}
+
+/* Botão de download*/
+.btn {
+    width: 140px;
+    padding: 12px 16px;
+    /* Cor de fundo fixa (Azul Claro) no JS do index.html */
+    background: #0c5abd;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    margin-top: 0px;
+    display: inline-flex;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1;
+}
+
+/* Ícone no botão de download */
+.btn-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    object-fit: contain;
+    margin: 0;
+    padding: 0;
+}
+
+.btn img {
+    display: block;
+}
+
+/* Container dos controles (apenas botão de download) */
+.layout-controls-simple {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Preview do post: sempre responsivo, proporção 9/16 (STORIES) */
+/* Preview do post: AGR- Não-fixo, cresce com o conteúdo */
+.post-preview {
+    position: relative;
+    width: 100%;
+    /* REMOVIDO: aspect-ratio: 9/16; */
+    min-height: 711px;
+    /* Altura mínima para visualização */
+    max-width: 400px;
+    margin: 0 auto;
+    background: #f0f6ff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    /* Alinha ao topo para o conteúdo começar no topo */
+    display: flex;
+    align-items: flex-start;
+    /* <-- NOVO */
+    justify-content: center;
+    /* Adicione um padding inferior para espaço depois do texto */
+}
+
+/* Alteração no .container para não fixar 100% da altura da viewport */
+.container {
+    width: 100%;
+    /* REMOVIDO: height: 100vh; */
+    min-height: 100vh;
+    /* Garante que o container ocupe a altura mínima */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+    padding: 20px;
+}
+
+
+/* Responsividade: empilha painéis em telas menores */
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/* CSS do titulo da noticia */
+.noticia {
+    position: absolute;
+    /* distâncias horizontais (margens esquerda/direita) para elemento absoluto */
+    left: 33px;
+    right: 33px;
+
+    /* Estilos de fonte e cor */
+    color: #000;
+    /* Usamos a família Medium por padrão; a primeira linha ficará em Bold via ::first-line */
+    font-weight: 500;
+    font-family: 'AvantGardeMedium', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    line-height: 1.15;
+
+    -webkit-hyphens: none; /* Para navegadores baseados em WebKit (Chrome, Safari) */
+    -ms-hyphens: none;     /* Para o Internet Explorer/Edge (se aplicável) */
+    hyphens: none;         /* Para navegadores modernos */
+    
+    /* Texto justificado (solicitação do usuário) */
+    text-align: justify;
+    text-justify: inter-word;
+    white-space: pre-wrap;
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* Estiliza apenas a primeira linha do título para usar a versão Bold */
+.noticia::first-line {
+    font-family: 'AvantGardeBold', 'AvantGardeMedium', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+}
+
+/* Classes quando usamos JS para separar a primeira linha explicitamente */
+.noticia .titulo-primeira-linha {
+    font-family: 'AvantGardeBold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    display: inline;
+    /* mantém fluxo inline dentro do bloco */
+}
+
+.noticia .corpo-noticia {
+    font-family: 'AvantGardeMedium', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 500;
+    display: inline;
+    /* mantém fluxo inline dentro do bloco */
+}
+
+/* CSS do cabeçalho (Ajuste a imagem para o topo) */
+.post-preview .celular-img {
+    position: absolute;
+    top: var(--celular-top, 25px);
+    /* margem superior */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 320px;
+    /* ajustar tamanho*/
+    height: auto;
+    z-index: 99999;
+    pointer-events: none;
+    display: block;
+}
+
+/* Overlay granulado: acima de tudo dentro do preview */
+.post-preview .granulado-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 50%;
+    object-fit: cover;
+    z-index: 100000;
+    /* acima de .celular-img */
+    pointer-events: none;
+    /* não bloqueia interações */
+    display: block;
+}
+
+/* Espaçamento e Divisória entre os parágrafos da notícia */
+.noticia .noticia-paragrafo {
+    margin-bottom: 7px; /* Espaço de respiro após a linha (abaixo da divisória, para o próximo parágrafo) */
+}
+
+/* NOVO: Cria a linha divisória com pseudoelemento ::after */
+.noticia .noticia-paragrafo::after {
+    content: ''; 
+    display: block; 
+    position: relative;
+    height: 2px; /* Espessura da linha */
+    background-color: #000000;
+        
+    /* Posição Vertical: Alinha a linha ao fundo do parágrafo com um pequeno espaço */
+    margin-top: 7px; /* Espaço de respiro entre o texto e a linha */
+}
+
+/* Regra CRUCIAL: Remove a borda e o espaçamento do ÚLTIMO parágrafo */
+.noticia .noticia-paragrafo:last-child {
+    margin-bottom: 0; /* Remove a margem (espaço) inferior */
+}
+
+/* CRUCIAL: Remove a linha do último parágrafo */
+.noticia .noticia-paragrafo:last-child::after {
+    display: none; /* Oculta a linha divisória */
+}
+
+/* Opcional: Remove o espaço superior do primeiro parágrafo, se necessário */
+.noticia .noticia-paragrafo:first-child {
+    padding-top: 0;
+}
