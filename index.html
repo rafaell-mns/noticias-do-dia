@@ -43,13 +43,10 @@
         const textoNoticia = document.getElementById('textoNoticia');
 
         // Função para atualizar o texto do título no preview
-        // Função para atualizar o texto do título no preview
         function syncTituloNoticia(text) {
             let tituloEl = preview.querySelector('.noticia');
             if (!tituloEl) return;
-            // Implementação robusta: separa no primeiro '\n' e envolve
-            // a primeira parte em um <span> com classe própria. Isso
-            // garante comportamento determinístico (útil para html2canvas)
+
             function escapeHTML(s) {
                 return String(s)
                     .replace(/&/g, '&amp;')
@@ -67,16 +64,16 @@
             let finalHtml = '';
 
             paragraphBlocks.forEach((block, index) => {
-                if (block.trim() === '') return; // Ignora blocos vazios
+                if (block.trim() === '') return;
 
                 // Dentro de cada bloco, divide em linhas (quebra de linha simples)
                 const lines = block.split(/\r?\n/);
                 const firstLine = lines.shift() || ''; // Primeira linha
                 const restLines = lines.length ? lines : []; // Linhas restantes
 
-                // Aplica a classe Bold na primeira linha do *parágrafo*
+                // Aplica a classe Bold na primeira linha
                 let blockHtml = '<span class="titulo-primeira-linha">' + escapeHTML(firstLine) + '</span>';
-                
+
                 if (restLines.length) {
                     // Adiciona as quebras de linha e o corpo do texto restante
                     blockHtml += '<br><span class="corpo-noticia">' + restLines.map(escapeHTML).join('<br>') + '</span>';
@@ -110,9 +107,7 @@
                 celularEl.className = 'celular-img';
                 celularEl.src = 'imagens/celular.png';
                 celularEl.alt = 'Detalhe celular stories';
-                // Insere depois de todos os outros elementos para que fique por cima (z-index)
                 preview.appendChild(celularEl);
-                // Quando a imagem carregar, reposiciona o título para ficar abaixo dela
                 celularEl.addEventListener('load', () => {
                     repositionTitulo();
                 });
@@ -134,6 +129,22 @@
                     // força recalculo visual se quiser — não obrigatório
                 });
             }
+        }
+
+        // Inserir overlay de data (formato DD/MM) sobre a imagem do celular
+        function inserirDataOverlay() {
+            let dataEl = preview.querySelector('.data-overlay');
+            if (!dataEl) {
+                dataEl = document.createElement('div');
+                dataEl.className = 'data-overlay';
+                dataEl.setAttribute('aria-hidden', 'true');
+                preview.appendChild(dataEl);
+            }
+
+            const now = new Date();
+            const dia = String(now.getDate()).padStart(2, '0');
+            const mes = String(now.getMonth() + 1).padStart(2, '0');
+            dataEl.textContent = `${dia}/${mes}`;
         }
 
         // Insere o elemento do título (se não existir) e aplica cor padrão
@@ -177,18 +188,14 @@
 
             // 1. Força o navegador a recalcular o layout para obter a altura correta do texto
             // Isso é crucial para textos longos após a mudança de posição 'top'
-            tituloEl.offsetHeight; 
+            tituloEl.offsetHeight;
 
             // 2. Calcula a altura total necessária para o .post-preview
             // Altura total = Posição do topo do título + Altura do conteúdo do título + Espaço inferior
             const alturaNecessaria = topPx + tituloEl.offsetHeight + BOTTOM_PADDING;
 
             // 3. Aplica a nova altura ao .post-preview
-            // Note que você deve definir o 'height' ou 'min-height'. Usar 'height' é mais direto para html2canvas.
             preview.style.height = `${alturaNecessaria}px`;
-            // Remove o min-height fixo se você o estava usando, mas como está no CSS, o JS o sobrescreverá.
-            
-            // O html2canvas usará essa altura quando for invocado.
         }
 
         // Chame repositionTitulo() no final de syncTituloNoticia e na inicialização
@@ -201,6 +208,7 @@
             if (preview) preview.style.background = COR_FIXA_FUNDO;
             inserirCelular();
             inserirGranulado();
+            inserirDataOverlay();
             inserirTitulo();
 
             const downloadBtnEl = document.getElementById('downloadBtn');

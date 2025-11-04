@@ -240,6 +240,23 @@ textarea {
     display: block;
 }
 
+.post-preview .data-overlay {
+    position: absolute;
+    top: 152px;   /* distância do topo */
+    left: 54px;   /* distância da esquerda */
+    color: #fffffe;
+    font-weight: 700;
+    font-family: 'AvantGardeBold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 36px;
+    line-height: 1;
+    text-align: center;
+    z-index: 101;
+    pointer-events: none;
+    -webkit-font-smoothing: antialiased;
+    display: block;
+}
+
+
 /* Reset básico */
 * {
     margin: 0;
@@ -428,10 +445,13 @@ textarea {
     font-size: 12px;
     line-height: 1.15;
 
-    -webkit-hyphens: none; /* Para navegadores baseados em WebKit (Chrome, Safari) */
-    -ms-hyphens: none;     /* Para o Internet Explorer/Edge (se aplicável) */
-    hyphens: none;         /* Para navegadores modernos */
-    
+    -webkit-hyphens: none;
+    /* Para navegadores baseados em WebKit (Chrome, Safari) */
+    -ms-hyphens: none;
+    /* Para o Internet Explorer/Edge (se aplicável) */
+    hyphens: none;
+    /* Para navegadores modernos */
+
     /* Texto justificado (solicitação do usuário) */
     text-align: justify;
     text-justify: inter-word;
@@ -472,7 +492,7 @@ textarea {
     max-width: 320px;
     /* ajustar tamanho*/
     height: auto;
-    z-index: 99999;
+    z-index: 100;
     pointer-events: none;
     display: block;
 }
@@ -486,7 +506,7 @@ textarea {
     height: 100%;
     opacity: 50%;
     object-fit: cover;
-    z-index: 100000;
+    z-index: 200;
     /* acima de .celular-img */
     pointer-events: none;
     /* não bloqueia interações */
@@ -495,29 +515,34 @@ textarea {
 
 /* Espaçamento e Divisória entre os parágrafos da notícia */
 .noticia .noticia-paragrafo {
-    margin-bottom: 7px; /* Espaço de respiro após a linha (abaixo da divisória, para o próximo parágrafo) */
+    margin-bottom: 7px;
+    /* Espaço de respiro após a linha (abaixo da divisória, para o próximo parágrafo) */
 }
 
 /* NOVO: Cria a linha divisória com pseudoelemento ::after */
 .noticia .noticia-paragrafo::after {
-    content: ''; 
-    display: block; 
+    content: '';
+    display: block;
     position: relative;
-    height: 2px; /* Espessura da linha */
+    height: 2px;
+    /* Espessura da linha */
     background-color: #000000;
-        
+
     /* Posição Vertical: Alinha a linha ao fundo do parágrafo com um pequeno espaço */
-    margin-top: 7px; /* Espaço de respiro entre o texto e a linha */
+    margin-top: 7px;
+    /* Espaço de respiro entre o texto e a linha */
 }
 
 /* Regra CRUCIAL: Remove a borda e o espaçamento do ÚLTIMO parágrafo */
 .noticia .noticia-paragrafo:last-child {
-    margin-bottom: 0; /* Remove a margem (espaço) inferior */
+    margin-bottom: 0;
+    /* Remove a margem (espaço) inferior */
 }
 
 /* CRUCIAL: Remove a linha do último parágrafo */
 .noticia .noticia-paragrafo:last-child::after {
-    display: none; /* Oculta a linha divisória */
+    display: none;
+    /* Oculta a linha divisória */
 }
 
 /* Opcional: Remove o espaço superior do primeiro parágrafo, se necessário */
