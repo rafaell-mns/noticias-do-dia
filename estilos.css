@@ -242,8 +242,10 @@ textarea {
 
 .post-preview .data-overlay {
     position: absolute;
-    top: 150px;   /* distância do topo */
-    left: 72px;   /* distância da esquerda */
+    top: 150px;
+    /* distância do topo */
+    left: 72px;
+    /* distância da esquerda */
     color: #fffffe;
     font-weight: 700;
     font-family: 'AvantGardeBold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -342,7 +344,7 @@ textarea {
     /* maior por padrão para facilitar edição */
     font-size: 16px;
     /* ligeiramente maior para legibilidade */
-    line-height: 1.35;
+    line-height: 1.15;
 }
 
 /* Botão de download*/
@@ -547,6 +549,84 @@ textarea {
 
 /* Opcional: Remove o espaço superior do primeiro parágrafo, se necessário */
 .noticia .noticia-paragrafo:first-child {
-    margin-top: 0; /* GARANTE QUE NÃO HAJA MARGEM SUPERIOR EXTRA */
+    margin-top: 0;
+    /* GARANTE QUE NÃO HAJA MARGEM SUPERIOR EXTRA */
     padding-top: 0;
+}
+
+/* ==== Ajustes de responsividade para celulares (sobrescreve regras conflitantes) ==== */
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 12px;
+        gap: 16px;
+        grid-template-columns: 1fr;
+    }
+
+    /* Texto de edição: não manter altura gigante no celular */
+    #textoNoticia {
+        min-height: 300px;
+        font-size: 10px;
+        line-height: 1.3;
+    }
+
+    /* Preview deve usar a largura disponível (com limite) e ficar centralizado */
+    .post-preview {
+        max-width: 92vw;
+        /* ocupa até 92% da largura da tela */
+        width: 100%;
+        min-height: 500px;
+        /* altura de visualização razoável no celular */
+        margin: 0 auto;
+        padding-bottom: 24px;
+    }
+
+    /* Ajustes da imagem do celular dentro do preview */
+    .post-preview .celular-img {
+        max-width: 235px;
+        top: 18px;
+    }
+
+    /* Notícia: reduzir margens laterais e aumentar legibilidade no celular */
+    .noticia {
+        left: 16px;
+        right: 16px;
+        font-size: 14px;
+        line-height: 1.28;
+    }
+
+    /* Data overlay e granulado: ajustar posição para telas pequenas */
+    .post-preview .data-overlay {
+        top: 130px;
+        left: 50px;
+        font-size: 20px;
+    }
+
+    .post-preview .granulado-overlay {
+        opacity: 18%;
+    }
+}
+
+/* Ajuste extra para telas muito pequenas (ex.: 360px de largura) */
+@media (max-width: 380px) {
+    #textoNoticia {
+        min-height: 180px;
+    }
+
+    .post-preview {
+        min-height: 380px;
+    }
+
+    .post-preview .celular-img {
+        max-width: 240px;
+    }
+
+    .noticia {
+        left: 12px;
+        right: 12px;
+        font-size: 13px;
+    }
 }
