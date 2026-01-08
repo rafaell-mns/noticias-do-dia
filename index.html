@@ -33,6 +33,14 @@ Texto da notícia 2
 
         <div class="panel">
             <div class="layout-controls-simple">
+                <div class="toggle-switch" id="layoutToggle">
+                    <div class="toggle-slider"></div>
+                    <div class="toggle-labels">
+                        <span class="toggle-label" id="labelAscom">ASCOM</span>
+                        <span class="toggle-label" id="labelGov">GOVERNO</span>
+                    </div>
+                </div>
+
                 <button class="btn" id="downloadBtn"><img src="imagens/download.png" alt="download"
                         class="btn-icon">Download</button>
             </div>
@@ -42,6 +50,44 @@ Texto da notícia 2
     </div>
 
     <script>
+        const layoutToggle = document.getElementById('layoutToggle');
+
+        // --- Lógica do Toggle Switch ---
+        // --- Lógica do Toggle Switch ---
+        layoutToggle.addEventListener('click', () => {
+            // 1. Alterna a classe visual no botão
+            layoutToggle.classList.toggle('gov-mode');
+
+            // 2. Verifica se o modo GOV está ativo
+            const isGov = layoutToggle.classList.contains('gov-mode');
+            
+            // Seleciona a imagem do cabeçalho
+            const imgHeader = preview.querySelector('.celular-img');
+
+            if (isGov) {
+                // MODO GOV
+                preview.style.background = '#dff5e5'; // Cor de fundo verde claro
+                
+                // Troca a imagem para o header do governo
+                if (imgHeader) imgHeader.src = 'imagens/header-governo.png';
+                
+            } else {
+                // MODO ASCOM (Padrão)
+                preview.style.background = COR_FIXA_FUNDO;
+                
+                // Volta para a imagem original
+                if (imgHeader) imgHeader.src = 'imagens/celular.png';
+            }
+
+            // CRUCIAL: Recalcula a posição do título assim que a nova imagem carregar
+            // Isso evita que o título fique encavalado se a altura das imagens for diferente
+            if (imgHeader) {
+                imgHeader.onload = () => {
+                    repositionTitulo();
+                };
+            }
+        });
+        
         // --- Configurações Fixas ---
         const COR_FIXA_FUNDO = '#f0f6ff';
         const COR_FIXA_TITULO = '#000000';
@@ -233,7 +279,14 @@ Texto da notícia 2
             const data = new Date();
             const dia = String(data.getDate()).padStart(2, '0');
             const mes = String(data.getMonth() + 1).padStart(2, '0');
-            return `noticias-dia-${dia}-${mes}`;
+            
+            // Verifica se o botão tem a classe de modo GOV ativa
+            const isGov = layoutToggle.classList.contains('gov-mode');
+            
+            // Define o sufixo do nome baseando-se no modo
+            const tipo = isGov ? 'GOV' : 'ASCOM';
+
+            return `noticias-dia-${dia}-${mes}-${tipo}`;
         }
 
         // Download
